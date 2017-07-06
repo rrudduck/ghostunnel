@@ -192,6 +192,11 @@ func buildConfig(caBundlePath string) (*tls.Config, error) {
 		return nil, fmt.Errorf("no cipher suites selected? aborting")
 	}
 
+	clientAuth := tls.RequireAndVerifyClientCert
+	if *serverAllowAllSelfSigned {
+		clientAuth = tls.RequireAnyClientCert
+	}
+
 	return &tls.Config{
 		// Certificates
 		RootCAs:   ca,
@@ -199,7 +204,7 @@ func buildConfig(caBundlePath string) (*tls.Config, error) {
 
 		PreferServerCipherSuites: true,
 
-		ClientAuth:   tls.RequireAndVerifyClientCert,
+		ClientAuth:   clientAuth,
 		MinVersion:   tls.VersionTLS12,
 		CipherSuites: suites,
 		CurvePreferences: []tls.CurveID{
