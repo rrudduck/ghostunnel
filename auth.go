@@ -22,12 +22,12 @@ import (
 )
 
 func verifyPeerCertificate(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
-	if len(verifiedChains) == 0 {
+	if len(verifiedChains) == 0 && !*serverAllowAllSelfSigned {
 		return errors.New("unauthorized: invalid principal, or principal not allowed")
 	}
 
 	// If --allow-all has been set, a valid cert is sufficient to connect.
-	if *serverAllowAll {
+	if *serverAllowAll || *serverAllowAllSelfSigned {
 		return nil
 	}
 

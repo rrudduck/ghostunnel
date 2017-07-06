@@ -158,10 +158,10 @@ func validateUnixOrLocalhost(addr string) bool {
 
 // Validate flags for server mode
 func serverValidateFlags() error {
-	if !(*serverAllowAll) && len(*serverAllowedCNs) == 0 && len(*serverAllowedOUs) == 0 && len(*serverAllowedDNSs) == 0 && len(*serverAllowedIPs) == 0 {
+	if !(*serverAllowAll) && !(*serverAllowAllSelfSigned) && len(*serverAllowedCNs) == 0 && len(*serverAllowedOUs) == 0 && len(*serverAllowedDNSs) == 0 && len(*serverAllowedIPs) == 0 {
 		return fmt.Errorf("at least one of --allow-all, --allow-cn, --allow-ou, --allow-dns-san or --allow-ip-san is required")
 	}
-	if *serverAllowAll && (len(*serverAllowedCNs) > 0 || len(*serverAllowedOUs) > 0 || len(*serverAllowedDNSs) > 0 || len(*serverAllowedIPs) > 0) {
+	if (*serverAllowAll || *serverAllowAllSelfSigned) && (len(*serverAllowedCNs) > 0 || len(*serverAllowedOUs) > 0 || len(*serverAllowedDNSs) > 0 || len(*serverAllowedIPs) > 0) {
 		return fmt.Errorf("--allow-all and other access control flags are mutually exclusive")
 	}
 	if !*serverUnsafeTarget && !validateUnixOrLocalhost(*serverForwardAddress) {
